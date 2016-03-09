@@ -4,8 +4,8 @@ import datetime
 import xlrd
 
 
-def write(path, name, content):
-    fo = open(path + name, 'w')
+def write(path, name, content, access_mode='w'):
+    fo = open(path + name, access_mode)
     fo.write(content)
     fo.close()
 
@@ -27,22 +27,17 @@ def mkdir(path):
 
 
 def utc2datetime(t):
-    """
-    Sends a :class:`float` time value.
-    Returns :class:`datetime.datetime` object.
-
-    :param t: :class:`float` time value.
-    """
     return datetime.datetime.fromtimestamp(t)
 
 
 def read_excel(path, name):
+
     data = xlrd.open_workbook(path + name)
-    table = data.sheets()[0]
-    ncols = table.ncols
+    # ncols = table.ncols
     names = []
-    for ncol in xrange(1, ncols):
-        for _ in table.col_values(ncol):
+    for sheet in [0, 1]:
+        table = data.sheets()[sheet]
+        for _ in table.col_values(1):
             if _ not in [u'电视剧', u'综艺']:
                 names.append(_.encode('utf8'))
     return names

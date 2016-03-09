@@ -12,19 +12,20 @@ import time
 
 tv_names = utils.read_excel('../files/', 'names.xlsx')
 
+
 if __name__ == '__main__':
     start = int(time.time())
     print "开始抓取 .."
-    #   spider tv_info
+    # spider tv_info
     # SpiderQq().tv_info(tv_names)
 
-    #   db tv_info
+    # db tv_info
     db_tv_infos = TvInfo.mget()
     db_tv_names = [_.name for _ in db_tv_infos]
     SerializeQq().tv_info(tv_names, db_tv_names)
 
-    #   spider play and opinion info
-    # db_tv_infos = TvInfo.mget()
+    # spider play and opinion info
+    db_tv_infos = TvInfo.mget()
     # SpiderQq().play_info(db_tv_infos)
 
     # db play_info

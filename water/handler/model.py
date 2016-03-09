@@ -28,8 +28,8 @@ class TvInfo(Base):
     description = Column(Text)
     last_update_time = Column(TIMESTAMP)
     update_info = Column(String(32))
-    all_number = Column(Integer)
-    current_number = Column(Integer)
+    all_number = Column(String(32))
+    current_number = Column(String(32))
     cast_member = Column(Text)
     platform = Column(String(32))
     label = Column(String(128))
@@ -61,8 +61,8 @@ class PlayInfo(Base):
     id = Column(Integer, primary_key=True)
     tv_id = Column(String(32))
     tv_name = Column(String(128))
-    day_play_counts = Column(Integer)
-    all_play_counts = Column(Integer)
+    day_play_counts = Column(String(62))
+    all_play_counts = Column(String(64))
     time_at = Column(TIMESTAMP)
 
     @classmethod
