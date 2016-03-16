@@ -57,8 +57,6 @@ class Qq(object):
                         platform=self.PLATFORM,
                     )
             elif tv_info.type == u'电视剧':
-                warning_message = u"《{}》play_info ,结果不准确\r\n". \
-                                  format(tv_info.name)
                 page = utils.read(PLAY_INFO_FILE_DIR, tv_info.name +
                                   PLAY_INFO_FILE_FIX)
                 json_content = play_info_is_valid_qq(page)

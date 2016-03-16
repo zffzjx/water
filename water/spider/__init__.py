@@ -35,6 +35,22 @@ def request(url, interval=60, cycle_times=3):
 def get_playlist(json_content):
     if not json_content.get('list'):
         return
+    recicle_time = 1
+    for _ in json_content.get('list'):
+        tv_type = _.get('BC')
+        if tv_type not in [u'电视剧', u'综艺']:
+            match = re.search(u'[\u4e00-\u9fa5]+', tv_type)
+            tv_type = match and match.group() or ''
+        if _.get('PLNAME') != u'qq' or tv_type not \
+           in [u'电视剧', u'综艺'] or _.get('BE') in [u'片花']:
+            if not recicle_time:
+                return
+            else:
+                recicle_time -= 1
+                continue
+        else:
+            return _
+
     tmp_playlist = json_content.get('list')[0]
     if tmp_playlist.get('PLNAME') != u'qq' or tmp_playlist.get('BC') not \
        in [u'电视剧', u'综艺'] or tmp_playlist.get('BE') in [u'片花']:

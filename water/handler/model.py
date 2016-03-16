@@ -25,7 +25,7 @@ class TvInfo(Base):
     tv_id = Column(String(32))
     name = Column(String(32))
     description = Column(Text)
-    last_update_time = Column(TIMESTAMP)
+    last_update_time = Column(String(64))
     update_info = Column(String(32))
     all_number = Column(String(32))
     current_number = Column(String(32))
