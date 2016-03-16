@@ -5,18 +5,17 @@ from sqlalchemy.exc import SQLAlchemyError
 from handler import DBSession
 
 Base = declarative_base()
-session = DBSession()
 
 
-def session_commit():
-    try:
-        session.flush()
-        session.commit()
-    except SQLAlchemyError:
-        session.rollback()
-        raise(SQLAlchemyError)
-    finally:
-        session.close()
+# def session_commit():
+#     try:
+#         session.flush()
+#         session.commit()
+#     except SQLAlchemyError:
+#         session.rollback()
+#         raise(SQLAlchemyError)
+#     finally:
+#         session.close()
 
 
 class TvInfo(Base):
@@ -41,18 +40,37 @@ class TvInfo(Base):
 
     @classmethod
     def add(cls, **kwds):
+        session = DBSession()
         session.add(cls(**kwds))
-        session_commit()
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()
 
     @classmethod
     def update(cls, **kwds):
+        session = DBSession()
         session.query(cls).filter(cls.name == kwds['name']). \
             update(kwds)
-        session_commit()
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()
 
     @classmethod
     def mget(cls):
-        return DBSession().query(cls).all()
+        session = DBSession()
+        result = session.query(cls).all()
+        session.close()
+        return result
 
 
 class PlayInfo(Base):
@@ -64,21 +82,41 @@ class PlayInfo(Base):
     day_play_counts = Column(String(62))
     all_play_counts = Column(String(64))
     time_at = Column(TIMESTAMP)
+    platform = Column(String(32))
 
     @classmethod
     def mget(cls):
-        return DBSession().query(cls).all()
+        session = DBSession()
+        result = session.query(cls).all()
+        session.close()
+        return result
 
     @classmethod
     def add(cls, **kwds):
+        session = DBSession()
         session.add(cls(**kwds))
-        session_commit()
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()
 
     @classmethod
     def update(cls, **kwds):
-        session.query(cls).filter(cls.tv_id == kwds['tv_id']). \
-            update(kwds)
-        session_commit()
+        session = DBSession()
+        session.query(cls).filter(cls.tv_id == kwds['tv_id'] and cls.tv_name
+                                  == kwds['tv_name']).update(kwds)
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()
 
 
 class OpinionInfo(Base):
@@ -97,15 +135,34 @@ class OpinionInfo(Base):
 
     @classmethod
     def mget(cls):
-        return DBSession().query(cls).all()
+        session = DBSession()
+        result = session.query(cls).all()
+        session.close()
+        return result
 
     @classmethod
     def add(cls, **kwds):
+        session = DBSession()
         session.add(cls(**kwds))
-        session_commit()
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()
 
     @classmethod
     def update(cls, **kwds):
+        session = DBSession()
         session.query(cls).filter(cls.tv_id == kwds['tv_id']). \
             update(kwds)
-        session_commit()
+        try:
+            session.flush()
+            session.commit()
+        except SQLAlchemyError:
+            session.rollback()
+            raise(SQLAlchemyError)
+        finally:
+            session.close()

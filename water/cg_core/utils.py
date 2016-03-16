@@ -2,10 +2,13 @@
 import os
 import datetime
 import xlrd
+import time
 
 
 def write(path, name, content, access_mode='w'):
     fo = open(path + name, access_mode)
+    if isinstance(content, unicode):
+        content = content.encode('utf8')
     fo.write(content)
     fo.close()
 
@@ -30,6 +33,10 @@ def utc2datetime(t):
     return datetime.datetime.fromtimestamp(t)
 
 
+def format_time(t):
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
+
+
 def read_excel(path, name):
 
     data = xlrd.open_workbook(path + name)
@@ -47,3 +54,8 @@ def format_seconds(seconds):
     minute = seconds // 60
     second = seconds - minute * 60
     return str(minute) + '分钟' + str(second) + '秒'
+
+
+def log(path='../logs/', name='', message='', level='Warning'):
+    mkdir(path)
+    write(path, level, format_time(time.time()) + message, 'a')
