@@ -46,6 +46,7 @@ class TvInfo(Base):
             session.flush()
             session.commit()
         except SQLAlchemyError:
+            print kwds
             session.rollback()
             raise(SQLAlchemyError)
         finally:
@@ -54,8 +55,8 @@ class TvInfo(Base):
     @classmethod
     def update(cls, **kwds):
         session = DBSession()
-        session.query(cls).filter(cls.name == kwds['name']). \
-            update(kwds)
+        session.query(cls).filter(cls.name == kwds['name'] and
+            cls.platform == kwds['platform'] and cls.type == kwds['type']).update(kwds) # noqa
         try:
             session.flush()
             session.commit()
@@ -66,9 +67,17 @@ class TvInfo(Base):
             session.close()
 
     @classmethod
-    def mget(cls):
+    def mget_by_platform(cls, platform):
         session = DBSession()
-        result = session.query(cls).all()
+        result = session.query(cls).filter(cls.platform == platform).all()
+        session.close()
+        return result
+
+    @classmethod
+    def mget_by_platform_and_type(cls, platform, type):
+        session = DBSession()
+        result = session.query(cls).\
+            filter(cls.platform == platform and cls.type == type).all()
         session.close()
         return result
 
@@ -83,6 +92,7 @@ class PlayInfo(Base):
     all_play_counts = Column(String(64))
     time_at = Column(TIMESTAMP)
     platform = Column(String(32))
+    type = Column(String(32))
 
     @classmethod
     def mget(cls):

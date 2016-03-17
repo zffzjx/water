@@ -1,33 +1,33 @@
 # coding=utf-8
 import re
-
+from cg_core import utils
 from handler.model import (
     PlayInfo,
     TvInfo,
 )
-from cg_core import utils
-from spider.qq import(
+from common import (
     TV_INFO_FILE_DIR,
-    TV_INFO_FILE_FIX,
     PLAY_INFO_FILE_DIR,
-    PLAY_INFO_FILE_FIX,
+    TV_INFO_FILE_FIX,
+    PLAY_INFO_FILE_FIX
 )
-from spider import(
-    get_all_list,
+from common.qq import(
+    PLATFORM,
+    SAVE_FILE,
+    play_info_is_valid_qq,
     tv_info_is_valid_qq,
     get_playlist,
-    play_info_is_valid_qq
+    get_all_list
 )
 
 
 class Qq(object):
 
-    PLATFORM = 'QQ'
-
     def __init__(self, now):
         self.now = now
 
     def play_info(self, db_tv_infos):
+        play_dir = PLAY_INFO_FILE_DIR + SAVE_FILE
         for tv_info in db_tv_infos:
             if tv_info.type == u'综艺':
                 vids = tv_info.vids.split(',')
@@ -36,7 +36,7 @@ class Qq(object):
                     warning_message = u"《{}》第{}期play_info ,结果不准确\r\n". \
                                       format(tv_info.name, episode)
 
-                    page = utils.read(PLAY_INFO_FILE_DIR, tv_info.name +
+                    page = utils.read(play_dir, tv_info.name +
                                       episode + PLAY_INFO_FILE_FIX)
                     json_content = play_info_is_valid_qq(page)
                     if not json_content:
@@ -54,10 +54,11 @@ class Qq(object):
                         day_play_counts=day_play_counts,
                         all_play_counts=all_play_counts,
                         time_at=self.now,
-                        platform=self.PLATFORM,
+                        platform=PLATFORM,
+                        type=u'综艺'
                     )
             elif tv_info.type == u'电视剧':
-                page = utils.read(PLAY_INFO_FILE_DIR, tv_info.name +
+                page = utils.read(play_dir, tv_info.name +
                                   PLAY_INFO_FILE_FIX)
                 json_content = play_info_is_valid_qq(page)
                 if not json_content:
@@ -74,12 +75,14 @@ class Qq(object):
                     day_play_counts=day_play_counts,
                     all_play_counts=all_play_counts,
                     time_at=self.now,
-                    platform=self.PLATFORM,
+                    platform=PLATFORM,
+                    type=u'电视剧'
                 )
 
     def tv_info(self, tv_names, db_tv_names):
+        info_dir = TV_INFO_FILE_DIR + SAVE_FILE
         for name in tv_names:
-            page = utils.read(TV_INFO_FILE_DIR, name + TV_INFO_FILE_FIX)
+            page = utils.read(info_dir, name + TV_INFO_FILE_FIX)
             json_content = tv_info_is_valid_qq(page)
             if not json_content:
                 continue
@@ -120,7 +123,7 @@ class Qq(object):
                               all_number=all_number,
                               current_number=current_number,
                               cast_member=cast_member,
-                              platform=self.PLATFORM,
+                              platform=PLATFORM,
                               label=label, update_info=update_info,
                               detail_urls=detail_urls,
                               vids=vids,
@@ -134,7 +137,7 @@ class Qq(object):
                            last_update_time=last_update_time,
                            all_number=all_number,
                            current_number=current_number,
-                           cast_member=cast_member, platform=self.PLATFORM,
+                           cast_member=cast_member, platform=PLATFORM,
                            label=label, update_info=update_info,
                            detail_urls=detail_urls, vids=vids,
                            type=tv_type,

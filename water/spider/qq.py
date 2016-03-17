@@ -1,27 +1,26 @@
 # coding=utf-8
-from cg_core import utils
+from spider import request
 import re
-from spider import (
-    request,
-    tv_info_is_valid_qq,
-    play_info_is_valid_qq
+from cg_core import utils
+from common import (
+    TV_INFO_FILE_DIR,
+    PLAY_INFO_FILE_DIR,
+    TV_INFO_FILE_FIX,
+    PLAY_INFO_FILE_FIX,
 )
-
-
-TV_INFO_FILE_DIR = '../files/tv_info/'
-
-PLAY_INFO_FILE_DIR = '../files/play_info/'
-
-TV_INFO_FILE_FIX = '.json'
-
-PLAY_INFO_FILE_FIX = '.json'
+from common.qq import(
+    SAVE_FILE,
+    play_info_is_valid_qq,
+    tv_info_is_valid_qq
+)
 
 
 class Qq(object):
 
     def play_info(self, db_tv_infos):
         url = 'http://data.video.qq.com/fcgi-bin/data?tid=70&&appid=10001007&appkey=e075742beb866145&callback=callback&low_login=1&idlist={}&otype=json' # noqa
-        utils.mkdir(PLAY_INFO_FILE_DIR)
+        play_dir = PLAY_INFO_FILE_DIR + SAVE_FILE
+        utils.mkdir(play_dir)
         for tv_info in db_tv_infos:
             if tv_info.type in [u'电视剧']:
                 print u"抓取《{}》播放信息中".format(tv_info.name)
@@ -31,7 +30,7 @@ class Qq(object):
                 if not play_info_is_valid_qq(page):
                     utils.log(message=warning_message)
                     continue
-                utils.write(PLAY_INFO_FILE_DIR, tv_info.name +
+                utils.write(play_dir, tv_info.name +
                             PLAY_INFO_FILE_FIX, page)
             elif tv_info.type in [u'综艺']:
                 vids = tv_info.vids.split(',')
@@ -44,13 +43,14 @@ class Qq(object):
                     if not play_info_is_valid_qq(page):
                         utils.log(message=warning_message)
                         continue
-                    utils.write(PLAY_INFO_FILE_DIR, tv_info.name + episode +
+                    utils.write(play_dir, tv_info.name + episode +
                                 PLAY_INFO_FILE_FIX, page)
             print u'play and opinion《{}》抓取完毕'.format(tv_info.name)
 
     def tv_info(self, tv_names):
         url = 'http://s.video.qq.com/search?comment=1&plat=2&otype=json&query={}&callback=callback'  # noqa
-        utils.mkdir(TV_INFO_FILE_DIR)
+        info_dir = TV_INFO_FILE_DIR + SAVE_FILE
+        utils.mkdir(info_dir)
         for name in tv_names:
             warning_message = u"Warning《{}》tv_info ,结果不准确\r\n". \
                               format(name)
@@ -58,7 +58,7 @@ class Qq(object):
             if not tv_info_is_valid_qq(page):
                 utils.log(message=warning_message)
                 continue
-            utils.write(TV_INFO_FILE_DIR, name + TV_INFO_FILE_FIX,
+            utils.write(info_dir, name + TV_INFO_FILE_FIX,
                         page.encode('utf8'))
             print u'tv_info/《' + name + u'》抓取完毕'
 
