@@ -1,5 +1,5 @@
 # coding=utf-8
-from sqlalchemy import Column, String, Integer, Text, TIMESTAMP
+from sqlalchemy import Column, String, Integer, Text, TIMESTAMP, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 from handler import DBSession
@@ -55,8 +55,8 @@ class TvInfo(Base):
     @classmethod
     def update(cls, **kwds):
         session = DBSession()
-        session.query(cls).filter(cls.name == kwds['name'] and
-            cls.platform == kwds['platform'] and cls.type == kwds['type']).update(kwds) # noqa
+        session.query(cls).filter(cls.name == kwds['name'],
+            cls.platform == kwds['platform'], cls.type == kwds['type']).update(kwds) # noqa
         try:
             session.flush()
             session.commit()
@@ -102,6 +102,16 @@ class PlayInfo(Base):
         return result
 
     @classmethod
+    def mget_map_by_platform_and_time_after(cls, platform, time_after):
+        session = DBSession()
+        subqry = session.query(func.min(cls.time_at)).\
+            filter(cls.time_at > time_after, cls.platform == platform)
+        result = session.query(cls). \
+            filter(cls.platform == platform, cls.time_at == subqry).all()
+        session.close()
+        return {_.tv_name: _.all_play_counts for _ in result}
+
+    @classmethod
     def add(cls, **kwds):
         session = DBSession()
         session.add(cls(**kwds))
@@ -117,7 +127,7 @@ class PlayInfo(Base):
     @classmethod
     def update(cls, **kwds):
         session = DBSession()
-        session.query(cls).filter(cls.tv_id == kwds['tv_id'] and cls.tv_name
+        session.query(cls).filter(cls.tv_id == kwds['tv_id'], cls.tv_name
                                   == kwds['tv_name']).update(kwds)
         try:
             session.flush()

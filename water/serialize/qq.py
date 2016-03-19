@@ -88,6 +88,7 @@ class Qq(object):
                 continue
             play_list = get_playlist(json_content)
             tv_type = play_list['BC']
+            tv_type = re.search(u'[\u4e00-\u9fa5]+', tv_type).group()
             description = play_list['TX']
             last_update_time = play_list['AT']
             update_info = play_list['SS']

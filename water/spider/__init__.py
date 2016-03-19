@@ -14,15 +14,15 @@ def request(url, interval=60, cycle_times=3, name='qq'):
 
     error return None.
     """
-    result = requests.get(url, headers=headers)
     while(cycle_times):
         try:
+            result = requests.get(url, headers=headers)
             if result.status_code == 200:
                 result.encoding = 'utf8'
                 return result.text
             if result.status_code == 500:
                 time.sleep(interval)
-                utils.log(name, message="网络出现错误,{}秒之后会重新抓取\r\n".format(interval)) # noqa
+                utils.log(message="网络出现错误,{}秒之后会重新抓取\r\n".format(interval)) # noqa
         except:
             result = None
         cycle_times -= 1

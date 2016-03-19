@@ -33,8 +33,8 @@ def utc2datetime(t):
     return datetime.datetime.fromtimestamp(t)
 
 
-def format_time(t):
-    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t))
+def format_time(t, format_str="%Y-%m-%d %H:%M:%S"):
+    return time.strftime(format_str, time.localtime(t))
 
 
 def read_excel(path, name):
