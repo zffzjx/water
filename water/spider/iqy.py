@@ -26,8 +26,11 @@ class Iqy(object):
         zongyi_names_url = 'http://top.iqiyi.com/index/top50.htm?cid=6&dim=day'
         for m in re.finditer(u'<li  j-delegate="liover"(.|\n)+?</li>',
                              request(zongyi_names_url)):
-            name = re.search(u'title=".+?"', m.group()).group()[7:-1]
-            name = re.search(u'.+?之', name).group()[:-1]
+            try:
+                name = re.search(u'title=".+?"', m.group()).group()[7:-1]
+                name = re.search(u'.+?之', name).group()[:-1]
+            except:
+                continue
             url = re.search(u'http.+?html', m.group()).group()
             x_id_str = request(url)
             id = re.search(u'data-player-tvid=".+?"', x_id_str).group()[18:-1]
