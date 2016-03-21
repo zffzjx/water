@@ -21,7 +21,7 @@ class Iqy(object):
     def dianshiju_info(self, tv_infos, db_tv_names):
         url = u'http://cache.video.qiyi.com/jp/vi/{}/{}/'
         for name, tv_info in tv_infos.items():
-            print u"抓取《{}》中".format(name)
+            # print u"抓取《{}》中".format(name)
             warning_message = u"《{}》tv_info ,结果不准确\r\n". \
                               format(name)
             tv_id = tv_info[1]['id']
@@ -74,7 +74,7 @@ class Iqy(object):
     def zongyi_info(self, tv_infos, db_tv_names):
         url = u'http://cache.video.qiyi.com/jp/vi/{}/{}/'
         for name, tv_info in tv_infos.items():
-            print u"抓取《{}》中".format(name)
+            # print u"抓取《{}》中".format(name)
             json_content = {}
             current_number = ''
             detail_titles = ''
@@ -142,14 +142,14 @@ class Iqy(object):
     def play_info(self, db_play_info_map, db_tv_infos):
         url = 'http://mixer.video.iqiyi.com/jp/mixin/videos/{}/'
         for db_tv_info in db_tv_infos:
-            print u'《{}》play_info 抓取中'.format(db_tv_info.name)
+            # print u'《{}》play_info 抓取中'.format(db_tv_info.name)
             for vid in db_tv_info.vids.split(','):
                 warning_message = u"《{}》{} play_info ,结果不准确\r\n". \
                     format(db_tv_info.name, vid)
                 page = request(url.format(vid))
                 json_content = play_info_is_valid(page)
                 if not json_content:
-                    print u'《{}》play_info 抓取失败'.format(db_tv_info.name)
+                    # print u'《{}》play_info 抓取失败'.format(db_tv_info.name)
                     utils.log(message=warning_message)
                     continue
                 all_play_counts = (int)(json_content['playCount'])

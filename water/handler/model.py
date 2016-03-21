@@ -46,7 +46,6 @@ class TvInfo(Base):
             session.flush()
             session.commit()
         except SQLAlchemyError:
-            print kwds
             session.rollback()
             raise(SQLAlchemyError)
         finally:
