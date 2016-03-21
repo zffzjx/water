@@ -9,7 +9,7 @@ class Yk(object):
         tv_urls_map = {}
         urls = ['http://www.youku.com/v_olist/c_97.html',
                 'http://www.youku.com/v_olist/c_85.html']
-        for url in urls:
+        for url in [urls[0]]:
             for m in re.finditer(u'<div class="p-link">(.|\n)+?</div>',
                                  request(url)):
                 url = re.search(u'http.+?\.html', m.group()).group()

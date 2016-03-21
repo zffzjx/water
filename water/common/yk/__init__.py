@@ -17,6 +17,11 @@ def info_and_play_is_valid(page, name):
             return
         if title != name:
             return
+        description_str = re. \
+            search(u'<span class="short" id="show_info_short"(.|\n)+?</div>',
+                   page)
+        if not description_str:
+            return
     except:
         return
     return page

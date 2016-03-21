@@ -1,4 +1,5 @@
 # coding=utf-8
+import time
 import re
 from spider import request
 from cg_core import utils
@@ -23,6 +24,10 @@ class Yk(object):
                               format(name)
             page = request(url)
             content = info_and_play_is_valid(page, name)
+            if not content:
+                time.sleep(30)
+                page = request(url)
+                content = info_and_play_is_valid(page, name)
             if not content:
                 utils.log(message=warning_message)
                 continue
@@ -83,8 +88,6 @@ class Yk(object):
             pre_all_play_counts = db_play_info_map.get(name)
             day_play_counts = pre_all_play_counts and \
                 max(all_play_counts - (int)(pre_all_play_counts), 0) or 0
-            # print name, tv_type, title, cast_member, description, tv_id, \
-            #     current_number, all_number, all_play_counts, day_play_counts
             if name in db_tv_names:
                 TvInfo.update(name=name, tv_id=tv_id,
                               description=description,
