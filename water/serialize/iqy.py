@@ -157,7 +157,8 @@ class Iqy(object):
                 tmp_all_play_counts = (int)(json_content['playCount'])
                 pre_all_play_counts = db_play_info_map.get(db_tv_info.name)
                 tmp_day_play_counts = pre_all_play_counts and \
-                    max(all_play_counts - (int)(pre_all_play_counts), 0) or 0
+                    max(tmp_all_play_counts - (int)(pre_all_play_counts), 0) \
+                    or 0
                 day_play_counts += (int)(tmp_day_play_counts)
                 all_play_counts += (int)(tmp_all_play_counts)
             PlayInfo.add(
