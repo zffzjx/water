@@ -24,7 +24,7 @@ class Iqy(object):
     def zongyi_infos(self):
         tv_infos = {}
         zongyi_names_url = 'http://top.iqiyi.com/index/top50.htm?cid=6&dim=day'
-        for m in re.finditer(u' <li  j-delegate="liover"(.|\n)+?</li>',
+        for m in re.finditer(u'<li  j-delegate="liover"(.|\n)+?</li>',
                              request(zongyi_names_url)):
             name = re.search(u'title=".+?"', m.group()).group()[7:-1]
             name = re.search(u'.+?之', name).group()[:-1]
