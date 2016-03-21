@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python /MyApp/water/water/start.py
+cd /MyApp/water/water && /usr/bin/python start.py &
