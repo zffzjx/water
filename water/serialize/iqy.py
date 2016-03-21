@@ -143,6 +143,8 @@ class Iqy(object):
         url = 'http://mixer.video.iqiyi.com/jp/mixin/videos/{}/'
         for db_tv_info in db_tv_infos:
             # print u'《{}》play_info 抓取中'.format(db_tv_info.name)
+            day_play_counts = 0
+            all_play_counts = 0
             for vid in db_tv_info.vids.split(','):
                 warning_message = u"《{}》{} play_info ,结果不准确\r\n". \
                     format(db_tv_info.name, vid)
@@ -152,16 +154,18 @@ class Iqy(object):
                     # print u'《{}》play_info 抓取失败'.format(db_tv_info.name)
                     utils.log(message=warning_message)
                     continue
-                all_play_counts = (int)(json_content['playCount'])
-                tmp_all_play_counts = db_play_info_map.get(db_tv_info.name)
-                day_play_counts = tmp_all_play_counts and \
-                    max(all_play_counts - (int)(tmp_all_play_counts), 0) or 0
-                PlayInfo.add(
-                    tv_id=vid,
-                    tv_name=db_tv_info.name,
-                    day_play_counts=day_play_counts,
-                    all_play_counts=all_play_counts,
-                    time_at=self.now,
-                    platform=PLATFORM,
-                    type=db_tv_info.type
-                )
+                tmp_all_play_counts = (int)(json_content['playCount'])
+                pre_all_play_counts = db_play_info_map.get(db_tv_info.name)
+                tmp_day_play_counts = pre_all_play_counts and \
+                    max(all_play_counts - (int)(pre_all_play_counts), 0) or 0
+                day_play_counts += (int)(tmp_day_play_counts)
+                all_play_counts += (int)(tmp_all_play_counts)
+            PlayInfo.add(
+                tv_id=vid,
+                tv_name=db_tv_info.name,
+                day_play_counts=day_play_counts,
+                all_play_counts=all_play_counts,
+                time_at=self.now,
+                platform=PLATFORM,
+                type=db_tv_info.type
+            )

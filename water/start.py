@@ -5,7 +5,9 @@ import threading
 from serialize.qq import Qq as SerializeQq
 from spider.qq import Qq as SpiderQq
 from spider.iqy import Iqy as SpiderIqy
+from spider.yk import Yk as SpiderYk
 from serialize.iqy import Iqy as SerializeIqy
+from serialize.yk import Yk as SerializeYk
 from handler.model import (
     TvInfo,
     PlayInfo
@@ -70,6 +72,23 @@ def start_iqy(now):
     print 'iqy抓取完毕,耗时', utils.format_seconds(end - start)
 
 
+def start_yk(now):
+    start = int(time.time())
+    print "yk开始抓取 .."
+    yk_spi = SpiderYk()
+    yk_db = SerializeYk(now)
+
+    # spider urls_map
+    tv_urls_map = yk_spi.tv_urls_map()
+    # db info and play
+    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'yk')]
+    db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
+        'yk', utils.format_time(time.time(), "%Y-%m-%d"))
+    yk_db.info_and_play(tv_urls_map, db_tv_names, db_play_info_map)
+    end = int(time.time())
+    print 'yk抓取完毕,耗时', utils.format_seconds(end - start)
+
+
 class Start(threading.Thread):
 
     def __init__(self, func, now):
@@ -86,3 +105,4 @@ if __name__ == '__main__':
 
     Start(start_qq, now).start()
     Start(start_iqy, now).start()
+    Start(start_yk, now).start()

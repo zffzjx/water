@@ -32,6 +32,8 @@ class Qq(object):
             if tv_info.type == u'综艺':
                 vids = tv_info.vids.split(',')
                 episodes = tv_info.detail_episodes.split(',')
+                day_play_counts = 0
+                all_play_counts = 0
                 for vid, episode in zip(vids, episodes):
                     warning_message = u"《{}》第{}期play_info ,结果不准确\r\n". \
                                       format(tv_info.name, episode)
@@ -43,20 +45,22 @@ class Qq(object):
                         continue
                     try:
                         play_infos = json_content['results'][0]['fields']
-                        day_play_counts = play_infos['tdnumc'] or '0'
-                        all_play_counts = play_infos['allnumc'] or '0'
+                        tmp_day_play_counts = play_infos['tdnumc'] or '0'
+                        tmp_all_play_counts = play_infos['allnumc'] or '0'
+                        all_play_counts += (int)(tmp_all_play_counts)
+                        day_play_counts += (int)(tmp_day_play_counts)
                     except:
                         utils.log(message=warning_message)
                         continue
-                    PlayInfo.add(
-                        tv_id=vid,
-                        tv_name=tv_info.name,
-                        day_play_counts=day_play_counts,
-                        all_play_counts=all_play_counts,
-                        time_at=self.now,
-                        platform=PLATFORM,
-                        type=u'综艺'
-                    )
+                PlayInfo.add(
+                    tv_id=tv_info.tv_id,
+                    tv_name=tv_info.name,
+                    day_play_counts=day_play_counts,
+                    all_play_counts=all_play_counts,
+                    time_at=self.now,
+                    platform=PLATFORM,
+                    type=u'综艺'
+                )
             elif tv_info.type == u'电视剧':
                 page = utils.read(play_dir, tv_info.name +
                                   PLAY_INFO_FILE_FIX)
