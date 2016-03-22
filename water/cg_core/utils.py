@@ -33,6 +33,10 @@ def utc2datetime(t):
     return datetime.datetime.fromtimestamp(t)
 
 
+def datetime2utc(dt):
+    return time.mktime(dt.timetuple())
+
+
 def format_time(t, format_str="%Y-%m-%d %H:%M:%S"):
     return time.strftime(format_str, time.localtime(t))
 

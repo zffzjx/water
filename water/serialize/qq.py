@@ -52,6 +52,8 @@ class Qq(object):
                     except:
                         utils.log(message=warning_message)
                         continue
+                if self.now.hour < 1:
+                    day_play_counts = 0
                 PlayInfo.add(
                     tv_id=tv_info.tv_id,
                     tv_name=tv_info.name,
@@ -73,6 +75,8 @@ class Qq(object):
                     all_play_counts = play_infos['allnumc'] or '0'
                 except:
                     continue
+                if self.now.hour < 1:
+                    day_play_counts = 0
                 PlayInfo.add(
                     tv_id=tv_info.tv_id,
                     tv_name=tv_info.name,
