@@ -104,7 +104,7 @@ class PlayInfo(Base):
     def mget_map_by_platform_and_time_after(cls, platform, time_after):
         session = DBSession()
         subqry = session.query(func.min(cls.time_at)).\
-            filter(cls.time_at > time_after, cls.platform == platform)
+            filter(cls.time_at >= time_after, cls.platform == platform)
         result = session.query(cls). \
             filter(cls.platform == platform, cls.time_at == subqry).all()
         session.close()

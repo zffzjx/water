@@ -1,5 +1,6 @@
 # coding=utf-8
 import re
+import time
 from cg_core import utils
 from handler.model import (
     PlayInfo,
@@ -152,6 +153,10 @@ class Iqy(object):
                 json_content = play_info_is_valid(page)
                 if not json_content:
                     # print u'《{}》play_info 抓取失败'.format(db_tv_info.name)
+                    time.sleep(30)
+                    page = request(url.format(vid))
+                    json_content = play_info_is_valid(page)
+                if not json_content:
                     utils.log(message=warning_message)
                     continue
                 tmp_all_play_counts = (int)(json_content['playCount'])
