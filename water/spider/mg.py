@@ -11,7 +11,7 @@ class Mg(object):
                 'http://www.mgtv.com/show/wprb/']
         pids_map = {}
         lists = []
-        for url in [urls[1]]:
+        for url in urls:
             page = request(url)
             all_lists = re.search(u'<ul class="clearfix ullist-ele">(.|\n)+?</ul>', page).group() # noqa
             for _list in re.finditer(u' <li>(.|\n)+?</li>', all_lists):
