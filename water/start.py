@@ -163,9 +163,9 @@ if __name__ == '__main__':
 
     now = utils.utc2datetime(time.time())
 
-    # Start(start_qq, now).start()
-    # Start(start_iqy, now).start()
-    # Start(start_yk, now).start()
-    # Start(start_let, now).start()
-    # Start(start_sh, now).start()
+    Start(start_qq, now).start()
+    Start(start_iqy, now).start()
+    Start(start_yk, now).start()
+    Start(start_let, now).start()
+    Start(start_sh, now).start()
     Start(start_mg, now).start()
