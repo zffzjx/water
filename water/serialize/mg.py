@@ -75,9 +75,6 @@ class Mg(object):
             pre_all_play_counts = db_play_info_map.get(name)
             day_play_counts = pre_all_play_counts and \
                 max(all_play_counts - (int)(pre_all_play_counts), 0) or 0
-            print current_number, description, cast_member, label, \
-                all_number, all_play_counts
-            continue
             if name in db_tv_names:
                 TvInfo.update(name=name, tv_id=pid,
                               description=description,
