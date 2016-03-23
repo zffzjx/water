@@ -1,8 +1,8 @@
 # coding=utf-8
 import re
-from common.let import PLATFORM
 from spider import request
 from common.let import (
+    PLATFORM,
     dianshiju_is_valid,
     play_info_is_valid,
     zongyi_is_valid,

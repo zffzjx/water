@@ -2,19 +2,25 @@
 # coding=utf-8
 import time
 import threading
-from serialize.qq import Qq as SerializeQq
-from spider.qq import Qq as SpiderQq
-from spider.iqy import Iqy as SpiderIqy
-from spider.yk import Yk as SpiderYk
-from spider.let import Let as SpiderLet
-from serialize.iqy import Iqy as SerializeIqy
-from serialize.yk import Yk as SerializeYk
-from serialize.let import Let as SerializeLet
 from handler.model import (
     TvInfo,
     PlayInfo
 )
 from cg_core import utils
+
+from spider.qq import Qq as SpiderQq
+from spider.iqy import Iqy as SpiderIqy
+from spider.yk import Yk as SpiderYk
+from spider.let import Let as SpiderLet
+from spider.sh import Sh as SpiderSh
+from spider.mg import Mg as SpiderMg
+
+from serialize.qq import Qq as SerializeQq
+from serialize.iqy import Iqy as SerializeIqy
+from serialize.yk import Yk as SerializeYk
+from serialize.let import Let as SerializeLet
+from serialize.sh import Sh as SerializeSh
+from serialize.mg import Mg as SerializeMg
 
 # tv_names = utils.read_excel('../files/', 'names.xlsx')
 
@@ -111,6 +117,38 @@ def start_let(now):
     print 'let抓取完毕,耗时', utils.format_seconds(end - start)
 
 
+def start_sh(now):
+    start = int(time.time())
+    print "sh开始抓取 .."
+    sh_spi = SpiderSh()
+    sh_db = SerializeSh(now)
+    # db
+    pids_map = sh_spi.pids_map()
+    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'sh')]
+    db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
+        'sh', utils.format_time(time.time(), "%Y-%m-%d"))
+    sh_db.info_and_play(pids_map, db_tv_names, db_play_info_map)
+
+    end = int(time.time())
+    print 'sh抓取完毕,耗时', utils.format_seconds(end - start)
+
+
+def start_mg(now):
+    start = int(time.time())
+    print "mg开始抓取 .."
+    mg_spi = SpiderMg()
+    mg_db = SerializeMg(now)
+    # db
+    pids_map = mg_spi.pids_map()
+    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'mg')]
+    db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
+        'mg', utils.format_time(time.time(), "%Y-%m-%d"))
+    mg_db.info_and_play(pids_map, db_tv_names, db_play_info_map)
+
+    end = int(time.time())
+    print 'mg抓取完毕,耗时', utils.format_seconds(end - start)
+
+
 class Start(threading.Thread):
 
     def __init__(self, func, now):
@@ -125,7 +163,9 @@ if __name__ == '__main__':
 
     now = utils.utc2datetime(time.time())
 
-    Start(start_qq, now).start()
-    Start(start_iqy, now).start()
-    Start(start_yk, now).start()
-    Start(start_let, now).start()
+    # Start(start_qq, now).start()
+    # Start(start_iqy, now).start()
+    # Start(start_yk, now).start()
+    # Start(start_let, now).start()
+    # Start(start_sh, now).start()
+    Start(start_mg, now).start()

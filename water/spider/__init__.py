@@ -18,6 +18,11 @@ def request(url, interval=60, cycle_times=3, name='qq'):
         try:
             result = requests.get(url, headers=headers)
             if result.status_code == 200:
+                if result.encoding and result.encoding.lower() == 'gbk':
+                    text = result.text
+                    text = text.encode('utf8')
+                    text = text.decode('utf8')
+                    return text
                 result.encoding = 'utf8'
                 return result.text
             if result.status_code == 500:
