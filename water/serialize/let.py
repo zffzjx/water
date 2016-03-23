@@ -41,9 +41,10 @@ class Let(object):
                 group()
             description = re.compile(u'<.+?>').sub('', description)
             all_number = re.search(u'共\d+?集', content).group()
+            all_number = re.search(u'\d+', all_number).group()
             current_number = re.search(u'至\d+?集', content)
-            current_number = current_number and current_number.group() or \
-                all_number
+            current_number = current_number and re \
+                .search(u'\d+', current_number.group()).group() or all_number
 
             page = request(play_url.format(pid))
             json_content = play_info_is_valid(page)
