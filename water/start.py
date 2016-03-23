@@ -6,8 +6,10 @@ from serialize.qq import Qq as SerializeQq
 from spider.qq import Qq as SpiderQq
 from spider.iqy import Iqy as SpiderIqy
 from spider.yk import Yk as SpiderYk
+from spider.let import Let as SpiderLet
 from serialize.iqy import Iqy as SerializeIqy
 from serialize.yk import Yk as SerializeYk
+from serialize.let import Let as SerializeLet
 from handler.model import (
     TvInfo,
     PlayInfo
@@ -89,6 +91,26 @@ def start_yk(now):
     print 'yk抓取完毕,耗时', utils.format_seconds(end - start)
 
 
+def start_let(now):
+    start = int(time.time())
+    print "let开始抓取 .."
+    let_spi = SpiderLet()
+    let_db = SerializeLet(now)
+
+    # dianshiju
+    dianshiju_urls_map = let_spi.dianshiju_urls_map()
+    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'let')]
+    db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
+        'let', utils.format_time(time.time(), "%Y-%m-%d"))
+    let_db.dianshiju(dianshiju_urls_map, db_tv_names, db_play_info_map)
+
+    # zongyi
+    zongyi_urls_map = let_spi.zongyi_urls_map()
+    let_db.zongyi(zongyi_urls_map, db_tv_names, db_play_info_map)
+    end = int(time.time())
+    print 'let抓取完毕,耗时', utils.format_seconds(end - start)
+
+
 class Start(threading.Thread):
 
     def __init__(self, func, now):
@@ -106,3 +128,4 @@ if __name__ == '__main__':
     Start(start_qq, now).start()
     Start(start_iqy, now).start()
     Start(start_yk, now).start()
+    Start(start_let, now).start()
