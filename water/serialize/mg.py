@@ -37,7 +37,7 @@ class Mg(object):
             detail_urls = ''
             detail_titles = ''
             detail_episodes = ''
-            current_number = re.search(u'"series" : ".+?"', info).group()
+            current_number = re.search(u'"lastseries" : ".+?"', info).group()
             current_number = current_number.split(':')[1][2:-1]
             description = re.search(u'简介</em>(.|\n)+?</span>', info).group()
             description = re.compile(u'<.+?>|简介|：|\s').sub(u'', description)

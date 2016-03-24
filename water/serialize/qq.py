@@ -103,6 +103,7 @@ class Qq(object):
             tv_id = play_list['ID']
             label = play_list['BE']
             cast_member = play_list['BM']
+            cast_member = re.compile(u'<.+?>').sub(u'', cast_member)
 
             def get_current_number(play_list):
                 match = re.search('\d+-\d+-\d+', play_list['TT'])
