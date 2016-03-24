@@ -34,7 +34,7 @@ class Yk(object):
             last_update_time = ''
             label = ''
             update_info = ''
-            detail_urls = ''
+            detail_urls = url
             detail_titles = ''
             detail_episodes = ''
             tv_id = re.search(u'id.+?\.html', url).group()[:-5]

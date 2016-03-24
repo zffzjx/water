@@ -22,6 +22,8 @@ from serialize.let import Let as SerializeLet
 from serialize.sh import Sh as SerializeSh
 from serialize.mg import Mg as SerializeMg
 
+from common.mg import TV_TYPE_MAP
+
 # tv_names = utils.read_excel('../files/', 'names.xlsx')
 
 
@@ -41,6 +43,9 @@ def start_qq(now):
     # db tv_info
     db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'qq')]
     qq_db.tv_info(tv_names, db_tv_names)
+
+    tv_names = tv_names + db_tv_names
+    tv_names = list(set(tv_names))
 
     # spider play
     db_tv_infos = TvInfo.mget_by_platform(u'qq')
@@ -70,7 +75,6 @@ def start_iqy(now):
     db_tv_names = [_.name for _ in TvInfo.mget_by_platform_and_type(u'iqy',
                    u'综艺')]
     iqy_db.zongyi_info(zongyi_infos, db_tv_names)
-
     # play_info
     db_tv_infos = TvInfo.mget_by_platform(u'iqy')
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
@@ -89,9 +93,14 @@ def start_yk(now):
     # spider urls_map
     tv_urls_map = yk_spi.tv_urls_map()
     # db info and play
-    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'yk')]
+    tv_infos = TvInfo.mget_by_platform(u'yk')
+    db_tv_names = [_.name for _ in tv_infos]
+
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
         'yk', utils.format_time(time.time(), "%Y-%m-%d"))
+    for tv_info in tv_infos:
+        if not tv_urls_map.get(tv_info.name):
+            tv_urls_map[tv_info.name] = tv_info.detail_urls
     yk_db.info_and_play(tv_urls_map, db_tv_names, db_play_info_map)
     end = int(time.time())
     print 'yk抓取完毕,耗时', utils.format_seconds(end - start)
@@ -105,13 +114,23 @@ def start_let(now):
 
     # dianshiju
     dianshiju_urls_map = let_spi.dianshiju_urls_map()
-    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'let')]
+    tv_infos = TvInfo.mget_by_platform(u'let')
+    db_tv_names = [_.name for _ in tv_infos]
+
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
         'let', utils.format_time(time.time(), "%Y-%m-%d"))
+    for tv_info in tv_infos:
+        if not dianshiju_urls_map.get(tv_info.name) and tv_info.type == u'电视剧': # noqa
+            dianshiju_urls_map[tv_info.name] = [tv_info.detail_urls, tv_info.tv_id, tv_info.cast_member, tv_info.label] # noqa
+
     let_db.dianshiju(dianshiju_urls_map, db_tv_names, db_play_info_map)
 
     # zongyi
     zongyi_urls_map = let_spi.zongyi_urls_map()
+    for tv_info in tv_infos:
+        if not zongyi_urls_map.get(tv_info.name) and tv_info.type == u'综艺':
+            zongyi_urls_map[tv_info.name] = [tv_info.detail_urls, tv_info.label] # noqa
+
     let_db.zongyi(zongyi_urls_map, db_tv_names, db_play_info_map)
     end = int(time.time())
     print 'let抓取完毕,耗时', utils.format_seconds(end - start)
@@ -124,7 +143,11 @@ def start_sh(now):
     sh_db = SerializeSh(now)
     # db
     pids_map = sh_spi.pids_map()
-    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'sh')]
+    tv_infos = TvInfo.mget_by_platform(u'sh')
+    db_tv_names = [_.name for _ in tv_infos]
+    for tv_info in tv_infos:
+        if not pids_map.get(tv_info.name):
+            pids_map[tv_info.name] = tv_info.tv_id
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
         'sh', utils.format_time(time.time(), "%Y-%m-%d"))
     sh_db.info_and_play(pids_map, db_tv_names, db_play_info_map)
@@ -140,11 +163,18 @@ def start_mg(now):
     mg_db = SerializeMg(now)
     # db
     pids_map = mg_spi.pids_map()
-    db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'mg')]
+    tv_infos = TvInfo.mget_by_platform(u'mg')
+    db_tv_names = [_.name for _ in tv_infos]
+    reverse = {v: k for k, v in TV_TYPE_MAP.iteritems()}
+    for tv_info in tv_infos:
+        if not pids_map.get(tv_info.name):
+            type_n = reverse[tv_info.type]
+            print 'type_n=', type_n
+            pids_map[tv_info.name] = [tv_info.tv_id, type_n]
+
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
         'mg', utils.format_time(time.time(), "%Y-%m-%d"))
     mg_db.info_and_play(pids_map, db_tv_names, db_play_info_map)
-
     end = int(time.time())
     print 'mg抓取完毕,耗时', utils.format_seconds(end - start)
 
