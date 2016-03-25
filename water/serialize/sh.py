@@ -1,5 +1,6 @@
 # coding=utf-8
 from spider import request
+from cg_core import utils
 from common.sh import (
     PLATFORM,
     TV_TYPE_MAP,
@@ -25,7 +26,10 @@ class Sh(object):
             info = request(info_url.format(pid.encode('utf8')))
             json_content = info_is_valid(info)
             if not json_content:
-                break
+                warning_message = u"sh《{}》tv_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
+                continue
             description = json_content['albumDesc']
             last_update_time = ''
             current_number = json_content['updateSet']
@@ -45,7 +49,10 @@ class Sh(object):
             play = request(play_url.format(pid.encode('utf8')))
             play_json = play_is_valid(play, pid)
             if not play_json:
-                break
+                warning_message = u"sh《{}》play_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
+                continue
             all_play_counts = play_json[pid]['total']
             pre_all_play_counts = db_play_info_map.get(name)
             day_play_counts = pre_all_play_counts and \

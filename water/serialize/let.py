@@ -1,6 +1,7 @@
 # coding=utf-8
 import re
 from spider import request
+from cg_core import utils
 from common.let import (
     PLATFORM,
     dianshiju_is_valid,
@@ -36,6 +37,9 @@ class Let(object):
             page = request(url)
             content = dianshiju_is_valid(page)
             if not content:
+                warning_message = u"let《{}》tv_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
                 continue
             description = re.search(u'<p class="p7">(.|\n)+?</p>', content). \
                 group()
@@ -49,6 +53,11 @@ class Let(object):
             page = request(play_url.format(pid))
             json_content = play_info_is_valid(page)
             if not json_content:
+                page = request(play_url.format(pid))
+                json_content = play_info_is_valid(page)
+            if not json_content:
+                warning_message = u"let《{}》play_info ,结果不准确\r\n". \
+                    format(name)
                 continue
             all_play_counts = json_content.get('plist_play_count')
             pre_all_play_counts = db_play_info_map.get(name)
@@ -113,6 +122,9 @@ class Let(object):
             d_page = request(description_url.format(pid.encode('utf8')))
             d_page = description_is_valid(d_page)
             if not d_page:
+                warning_message = u"let《{}》description_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
                 continue
             description = re.search(u'<p class="p7">(.|\n)+?</p>', d_page). \
                 group()
@@ -128,6 +140,9 @@ class Let(object):
             n_page = request(number_utl.format(pid))
             n_json = number_utl_is_valid(n_page)
             if not n_json:
+                warning_message = u"let zongyi《{}》number_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
                 continue
             all_number = n_json['total']
             current_number = n_json['data'][0]['episode']
@@ -142,6 +157,9 @@ class Let(object):
             page = request(play_url.format(pid))
             json_content = play_info_is_valid(page)
             if not json_content:
+                warning_message = u"let《{}》play_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
                 continue
             all_play_counts = json_content.get('plist_play_count')
             pre_all_play_counts = db_play_info_map.get(name)

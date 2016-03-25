@@ -93,7 +93,7 @@ class Iqy(object):
                 json_content = tv_info_is_valid(page)
                 if not json_content:
                     utils.log(message=warning_message)
-                    break
+                    continue
                 tmp_current_number = re. \
                     search(u'/(\d{7,})+?', json_content['vpic']).group()[1:]
                 current_number = max(tmp_current_number, current_number)

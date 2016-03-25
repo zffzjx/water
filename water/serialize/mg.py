@@ -1,5 +1,6 @@
 # coding=utf-8
 import re
+from cg_core import utils
 from spider import request
 from common.mg import (
     PLATFORM,
@@ -31,6 +32,9 @@ class Mg(object):
             info = request(info_url.format(type_n=tv_infos[1], pid=tv_infos[0])) # noqa
             info = info_is_valid(info)
             if not info:
+                warning_message = u"mg《{}》tv_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
                 continue
             last_update_time = ''
             update_info = ''
@@ -55,17 +59,26 @@ class Mg(object):
                 year_json = request(year_url.format(pid))
                 year = year_json_is_valid(year_json)
                 if not year:
+                    warning_message = u"mg zongi《{}》year_info ,结果不准确\r\n". \
+                        format(name)
+                    utils.log(message=warning_message)
                     continue
                 number_info = request(number_url.format(pid=pid,
                                       year=(int)(year[0])))
                 number_info = number_info_is_valid(number_info)
                 if not number_info:
+                    warning_message = u"mg zongyi《{}》number_info ,结果不准确\r\n". \
+                        format(name)
+                    utils.log(message=warning_message)
                     continue
                 all_number = len([_ for _ in number_info])
             play_info = request(play_url.format(pid))
             play_json = play_is_valid(play_info)
             if not play_json:
-                break
+                warning_message = u"mg《{}》play_info ,结果不准确\r\n". \
+                    format(name)
+                utils.log(message=warning_message)
+                continue
             all_play_counts_str = play_json['data']['allVVStr']
             all_play_counts = (float)(re.compile(u'万|亿').sub(u'', all_play_counts_str)) # noqa
             if u'万'in all_play_counts_str:

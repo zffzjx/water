@@ -68,6 +68,9 @@ class Yk(object):
                     divid = re.search(u'\'.+?\'', _.group()).group()[1:-1]
                     current_number_str = request(number_url.format(tv_id.encode('utf8'), divid.encode('utf8'))) # noqa
                     if not current_number_str:
+                        warning_message = u"yk 《{} 》number结果不准确\r\n". \
+                            format(name)
+                        utils.log(message=warning_message)
                         continue
                     tmp_episode = [_ for _ in re.finditer(u'<ul(.|\n)+?</ul>',
                                                           current_number_str)]
