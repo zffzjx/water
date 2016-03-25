@@ -69,10 +69,10 @@ def start_iqy(now):
     tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'电视剧')
     db_tv_names = [_.name for _ in tv_infos]
     for tv_info in tv_infos:
-        if not dianshiju_infos.get(tv_info.name):
+        if not dianshiju_infos.get(tv_info.name) and tv_info.type == u'电视剧':
             dianshiju_infos[tv_info.name] = \
                 [
-                    {'url': tv_info.detail_urls},
+                    {'url': [tv_info.detail_urls]},
                     {'id': tv_info.tv_id},
                     {'v_id': tv_info.vids}]
 
@@ -83,10 +83,10 @@ def start_iqy(now):
     tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'综艺')
     db_tv_names = [_.name for _ in tv_infos]
     for tv_info in tv_infos:
-        if not zongyi_infos.get(tv_info.name):
+        if not zongyi_infos.get(tv_info.name) and tv_info.type == u'综艺':
             zongyi_infos[tv_info.name] = \
                 [
-                    {'url': tv_info.detail_urls},
+                    {'url': tv_info.detail_urls.split(",")},
                     {'id': tv_info.tv_id},
                     {'v_id': tv_info.vids}]
 
@@ -97,6 +97,8 @@ def start_iqy(now):
         'iqy', utils.format_time(time.time(), "%Y-%m-%d"))
     iqy_db.play_info(db_play_info_map, db_tv_infos)
     end = int(time.time())
+
+    return
     print 'iqy抓取完毕,耗时', utils.format_seconds(end - start)
 
 
@@ -140,7 +142,6 @@ def start_let(now):
             dianshiju_urls_map[tv_info.name] = [tv_info.detail_urls, tv_info.tv_id, tv_info.cast_member, tv_info.label] # noqa
 
     let_db.dianshiju(dianshiju_urls_map, db_tv_names, db_play_info_map)
-
     # zongyi
     zongyi_urls_map = let_spi.zongyi_urls_map()
     for tv_info in tv_infos:

@@ -35,9 +35,6 @@ class Qq(object):
                 day_play_counts = 0
                 all_play_counts = 0
                 for vid, episode in zip(vids, episodes):
-                    warning_message = u"《{}》第{}期play_info ,结果不准确\r\n". \
-                                      format(tv_info.name, episode)
-
                     page = utils.read(play_dir, tv_info.name +
                                       episode + PLAY_INFO_FILE_FIX)
                     json_content = play_info_is_valid_qq(page)
@@ -50,7 +47,6 @@ class Qq(object):
                         all_play_counts += (int)(tmp_all_play_counts)
                         day_play_counts += (int)(tmp_day_play_counts)
                     except:
-                        utils.log(message=warning_message)
                         continue
                 if self.now.hour < 1:
                     day_play_counts = 0

@@ -24,7 +24,7 @@ class Qq(object):
         for tv_info in db_tv_infos:
             if tv_info.type in [u'电视剧']:
                 # print u"抓取《{}》播放信息中".format(tv_info.name)
-                warning_message = u"Warning《{}》play_info ,结果不准确\r\n". \
+                warning_message = u"qq Warning《{}》play_info ,结果不准确\r\n". \
                                   format(tv_info.name)
                 page = request(url.format(tv_info.tv_id))
                 if not play_info_is_valid_qq(page):
@@ -37,7 +37,7 @@ class Qq(object):
                 episodes = tv_info.detail_episodes.split(',')
                 for vid, episode in zip(vids, episodes):
                     # print u"抓取《{}》第{}期播放信息中。。。".format(tv_info.name, episode)
-                    warning_message = u"Warning《{}》第{}期play_info ,结果不准确\r\n". \
+                    warning_message = u"qq《{}》第{}期play_info ,结果不准确\r\n". \
                                       format(tv_info.name, episode)
                     page = request(url.format(vid))
                     if not play_info_is_valid_qq(page):
@@ -52,7 +52,7 @@ class Qq(object):
         info_dir = TV_INFO_FILE_DIR + SAVE_FILE
         utils.mkdir(info_dir)
         for name in tv_names:
-            warning_message = u"Warning《{}》tv_info ,结果不准确\r\n". \
+            warning_message = u"qq Warning《{}》tv_info ,结果不准确\r\n". \
                               format(name)
             page = request(url.format(name.encode('utf8')))
             if not tv_info_is_valid_qq(page):

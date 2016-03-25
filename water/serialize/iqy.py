@@ -23,7 +23,7 @@ class Iqy(object):
         url = u'http://cache.video.qiyi.com/jp/vi/{}/{}/'
         for name, tv_info in tv_infos.items():
             # print u"抓取《{}》中".format(name)
-            warning_message = u"《{}》tv_info ,结果不准确\r\n". \
+            warning_message = u"《iqy {}》tv_info ,结果不准确\r\n". \
                               format(name)
             tv_id = tv_info[1]['id']
             vids = tv_info[2]['v_id']
@@ -87,7 +87,7 @@ class Iqy(object):
             last_update_time = ''
             for id, v_id in zip(tv_info[1]['id'], tv_info[2]['v_id']):
                 tv_id = id
-                warning_message = u"《{}》{}期tv_info ,结果不准确\r\n". \
+                warning_message = u"iqy《{}》{}期tv_info ,结果不准确\r\n". \
                     format(name, id)
                 page = request(url.format(id, v_id))
                 json_content = tv_info_is_valid(page)
@@ -147,7 +147,7 @@ class Iqy(object):
             day_play_counts = 0
             all_play_counts = 0
             for vid in db_tv_info.vids.split(','):
-                warning_message = u"《{}》{} play_info ,结果不准确\r\n". \
+                warning_message = u"iqy《{}》{} play_info ,结果不准确\r\n". \
                     format(db_tv_info.name, vid)
                 page = request(url.format(vid))
                 json_content = play_info_is_valid(page)
