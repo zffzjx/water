@@ -79,6 +79,9 @@ class Yk(object):
                     tmp_episode = re.search(u'<div id="episode">(.|\n)+?</div>', page).group() # noqa
                     tmp_episode = [_ for _ in re.finditer(u'<ul(.|\n)+?</ul>',
                                                           tmp_episode)]
+                    if not tmp_episode:
+                        utils.log(message=warning_message)
+                        continue
                     all_number = len(tmp_episode)
                 current_number = re.search(u'<label>.+?</label>',
                                            tmp_episode[0].group()).group()
