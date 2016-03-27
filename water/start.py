@@ -80,6 +80,7 @@ def start_iqy(now):
 
     # zongyi
     zongyi_infos = iqy_spi.zongyi_infos()
+    zongyi_infos = {}
     tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'综艺')
     db_tv_names = [_.name for _ in tv_infos]
     for tv_info in tv_infos:
@@ -88,7 +89,7 @@ def start_iqy(now):
                 [
                     {'url': tv_info.detail_urls.split(",")},
                     {'id': tv_info.tv_id},
-                    {'v_id': tv_info.vids}]
+                    {'v_id': tv_info.vids.split(",")}]
 
     iqy_db.zongyi_info(zongyi_infos, db_tv_names)
     # play_info
@@ -98,7 +99,6 @@ def start_iqy(now):
     iqy_db.play_info(db_play_info_map, db_tv_infos)
     end = int(time.time())
 
-    return
     print 'iqy抓取完毕,耗时', utils.format_seconds(end - start)
 
 
