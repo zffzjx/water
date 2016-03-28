@@ -45,10 +45,10 @@ class Iqy(object):
                 description = re.search(u'<span class="bigPic-b-jtxt">(.|\n)+?</span>', page) or u''# noqa
                 if description:
                     description = re.compile(u'<.+?>').sub(u'', description.group()) # noqa
-                cast_number = re.search(u'<p class="li-large">主持人：(.|\n)+?</p>', page) or u'' # noqa
-                if cast_number:
-                    cast_number = re.compile(u'<.+?>|\s|主持人：'). \
-                        sub(u'', cast_number.group())
+                cast_member = re.search(u'<p class="li-large">主持人：(.|\n)+?</p>', page) or u'' # noqa
+                if cast_member:
+                    cast_member = re.compile(u'<.+?>|\s|主持人：'). \
+                        sub(u'', cast_member.group())
 
                 lists = request(list_url.format(id.encode('utf8')))
                 try:
@@ -59,7 +59,7 @@ class Iqy(object):
                 except:
                     continue
                 tv_infos[name] = [vids, current_number, description,
-                                  cast_number]
+                                  cast_member]
             else:
                 continue
         return tv_infos

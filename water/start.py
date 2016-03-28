@@ -88,7 +88,7 @@ def start_iqy(now):
                     tv_info.vids.split(","),
                     tv_info.current_number,
                     tv_info.description,
-                    tv_info.cast_number]
+                    tv_info.cast_member]
     iqy_db.zongyi_info(zongyi_infos, db_tv_names)
     # play_info
     db_tv_infos = TvInfo.mget_by_platform(u'iqy')
