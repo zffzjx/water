@@ -25,52 +25,41 @@ class Iqy(object):
     def zongyi_infos(self):
         tv_infos = {}
         zongyi_names_url = 'http://top.iqiyi.com/index/top50.htm?cid=6&dim=day'
+        list_url = 'http://cache.video.qiyi.com/jp/sdvlst/6/{}/?callback=callback' # noqa
         for m in re.finditer(u'<li  j-delegate="liover"(.|\n)+?</li>',
                              request(zongyi_names_url)):
             url = re.search(u'http.+?html', m.group()).group()
             page = request(url)
             try:
-                page = re.search(u'<h2 class="jiemu-tit">.+?</h2>', page).group() # noqa
-                name = re.search(u'title=".+?"', page).group()[7:-1]
-                url = re.search(u'http.+?\.html', page).group()
+                head = re.search(u'<h2 class="jiemu-tit">.+?</h2>', page).group() # noqa
+                name = re.search(u'title=".+?"', head).group()[7:-1]
+                url = re.search(u'http.+?\.html', head).group()
+                id = re.search(u'sourceId:\d+', page)
+                if not id:
+                    continue
+                id = re.search(u'\d+', id.group()).group()
             except:
                 continue
             if not tv_infos.get(name):
                 page = request(url)
-                list_id = re.search(u'data-bodansubid="\d+"', page)
-                if list_id:
-                    url = 'http://cache.video.qiyi.com/jp/plst/{}/?callback=callback' # noqa
-                    list_id = re.search(u'\d+', list_id.group()).group()
-                    page = request(url.format(list_id.encode('utf8')))
-                    json_content = json.loads(re.search(u'\({(.|\n)+}\)', page).group()[1:-1]) # noqa
-                    current_number = re.search(u'/\d+/', json_content['data']['plst'][0]['picUrl']).group()[1:-1] # noqa
-                    vids = [str(_['tvId']) for _ in json_content['data']['plst']] # noqa
-                    description = u''
-                    cast_number = u''
-                    tv_infos[name] = [vids, current_number, description,
-                                      cast_number]
-                else:
-                    vids = re.finditer(u'<li data-juji-new-tvid="\d+"', page)
-                    vids = [str(re.search(u'\d+', _.group()).group()) for
-                            _ in vids]
-                    if not vids:
-                        vids = re.finditer(u'<li data-juji-new-tvid="\d+"', page)
-                        vids = [str(re.search(u'\d+', _.group()).group()) for
-                    try:
-                        current_number = re.search(u'<span class="mod-listTitle_right">.+?</span>', page).group() # noqa
-                        current_number = re.compile(u'<.+?>').\
-                            sub(u'', current_number)
-                    except:
-                        continue
-                    description = re.search(u'<span class="bigPic-b-jtxt">(.|\n)+?</span>', page) or u''# noqa
-                    if description:
-                        description = re.compile(u'<.+?>').sub(u'', description.group()) # noqa
-                    cast_number = re.search(u'<p class="li-large">主持人：(.|\n)+?</p>', page) or u'' # noqa
-                    if cast_number:
-                        cast_number = re.compile(u'<.+?>|\s|主持人：'). \
-                            sub(u'', cast_number.group())
-                    tv_infos[name] = [vids, current_number, description,
-                                      cast_number]
+                description = re.search(u'<span class="bigPic-b-jtxt">(.|\n)+?</span>', page) or u''# noqa
+                if description:
+                    description = re.compile(u'<.+?>').sub(u'', description.group()) # noqa
+                cast_number = re.search(u'<p class="li-large">主持人：(.|\n)+?</p>', page) or u'' # noqa
+                if cast_number:
+                    cast_number = re.compile(u'<.+?>|\s|主持人：'). \
+                        sub(u'', cast_number.group())
+
+                lists = request(list_url.format(id.encode('utf8')))
+                try:
+                    lists = re.search(u'\({(.|\n)*}\)', lists).group()[1:-1]
+                    json_lists = json.loads(lists)
+                    vids = [str(_.get('tvId')) for _ in json_lists.get('data')]
+                    current_number = json_lists.get('data')[0]['tvYear']
+                except:
+                    continue
+                tv_infos[name] = [vids, current_number, description,
+                                  cast_number]
             else:
                 continue
         return tv_infos

@@ -65,21 +65,20 @@ def start_iqy(now):
     iqy_db = SerializeIqy(now)
 
     # dianshiju
-    # dianshiju_infos = iqy_spi.dianshiju_infos()
-    # tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'电视剧')
-    # db_tv_names = [_.name for _ in tv_infos]
-    # for tv_info in tv_infos:
-    #     if not dianshiju_infos.get(tv_info.name) and tv_info.type == u'电视剧':
-    #         dianshiju_infos[tv_info.name] = \
-    #             [
-    #                 {'url': [tv_info.detail_urls]},
-    #                 {'id': tv_info.tv_id},
-    #                 {'v_id': tv_info.vids}]
-    # iqy_db.dianshiju_info(dianshiju_infos, db_tv_names)
+    dianshiju_infos = iqy_spi.dianshiju_infos()
+    tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'电视剧')
+    db_tv_names = [_.name for _ in tv_infos]
+    for tv_info in tv_infos:
+        if not dianshiju_infos.get(tv_info.name) and tv_info.type == u'电视剧':
+            dianshiju_infos[tv_info.name] = \
+                [
+                    {'url': [tv_info.detail_urls]},
+                    {'id': tv_info.tv_id},
+                    {'v_id': tv_info.vids}]
+    iqy_db.dianshiju_info(dianshiju_infos, db_tv_names)
 
     # zongyi
-    # zongyi_infos = iqy_spi.zongyi_infos()
-    zongyi_infos = {}
+    zongyi_infos = iqy_spi.zongyi_infos()
     tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'综艺')
     db_tv_names = [_.name for _ in tv_infos]
     for tv_info in tv_infos:
@@ -91,7 +90,6 @@ def start_iqy(now):
                     tv_info.description,
                     tv_info.cast_number]
     iqy_db.zongyi_info(zongyi_infos, db_tv_names)
-    return
     # play_info
     db_tv_infos = TvInfo.mget_by_platform(u'iqy')
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
@@ -210,9 +208,9 @@ if __name__ == '__main__':
 
     now = utils.utc2datetime(time.time())
 
-    # Start(start_qq, now).start()
+    Start(start_qq, now).start()
     Start(start_iqy, now).start()
-    # Start(start_yk, now).start()
-    # Start(start_let, now).start()
-    # Start(start_sh, now).start()
-    # Start(start_mg, now).start()
+    Start(start_yk, now).start()
+    Start(start_let, now).start()
+    Start(start_sh, now).start()
+    Start(start_mg, now).start()
