@@ -1,5 +1,4 @@
 # coding=utf-8
-import re
 import time
 from cg_core import utils
 from handler.model import (
@@ -73,44 +72,21 @@ class Iqy(object):
                            )
 
     def zongyi_info(self, tv_infos, db_tv_names):
-        url = u'http://cache.video.qiyi.com/jp/vi/{}/{}/'
         for name, tv_info in tv_infos.items():
             # print u"抓取《{}》中".format(name)
-            json_content = {}
-            current_number = ''
-            detail_titles = ''
-            description = ''
-            vids = ''
-            tv_id = ''
-            label = ''
-            cast_member = ''
-            last_update_time = ''
-            for id, v_id in zip(tv_info[1]['id'], tv_info[2]['v_id']):
-                tv_id = id
-                warning_message = u"iqy《{}》{}期tv_info ,结果不准确\r\n". \
-                    format(name, id)
-                page = request(url.format(id, v_id))
-                json_content = tv_info_is_valid(page)
-                if not json_content:
-                    utils.log(message=warning_message)
-                    continue
-                tmp_current_number = re. \
-                    search(u'/(\d{7,})+?', json_content['vpic']).group()[1:]
-                current_number = max(tmp_current_number, current_number)
-                detail_titles += json_content['vn'] + ","
-                description += json_content['info'] + ","
-                label = json_content['tg']
-                cast_member = json_content['ma']
-                tmp_last_update_time = json_content['up']
-                last_update_time = max(tmp_last_update_time, last_update_time)
-                update_info = json_content['qiyiPlayStrategy'][:32]
-            if not json_content:
-                continue
-            vids = ",".join(tv_info[1]['id'])
-            all_number = len(tv_info[1]['id'])
-            detail_urls = ",".join(tv_info[0]['url'])
+            tv_id = u''
+            description = tv_info[2]
+            last_update_time = u''
+            all_number = len(tv_info[0])
+            current_number = tv_info[1]
+            cast_member = tv_info[3]
+            label = u''
+            update_info = u''
+            detail_urls = u''
+            vids = ",".join(tv_info[0])
             tv_type = u'综艺'
-            detail_episodes = ''
+            detail_titles = u''
+            detail_episodes = u''
             if name in db_tv_names:
                 TvInfo.update(name=name, tv_id=tv_id,
                               description=description,
@@ -144,7 +120,6 @@ class Iqy(object):
         url = 'http://mixer.video.iqiyi.com/jp/mixin/videos/{}/'
         for db_tv_info in db_tv_infos:
             # print u'《{}》play_info 抓取中'.format(db_tv_info.name)
-            tmp_day_play_counts = 0
             tmp_all_play_counts = 0
             for vid in db_tv_info.vids.split(','):
                 warning_message = u"iqy《{}》{} play_info ,结果不准确\r\n". \
@@ -165,8 +140,6 @@ class Iqy(object):
             day_play_counts = pre_all_play_counts and \
                 max(all_play_counts - (int)(pre_all_play_counts), 0) \
                 or 0
-            day_play_counts += (int)(tmp_day_play_counts)
-            all_play_counts += (int)(tmp_all_play_counts)
             PlayInfo.add(
                 tv_id=vid,
                 tv_name=db_tv_info.name,
