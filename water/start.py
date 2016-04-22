@@ -9,7 +9,7 @@ from handler.model import (
 from cg_core import utils
 
 from spider.qq import Qq as SpiderQq
-from spider.iqy import Iqy as SpiderIqy
+# from spider.iqy import Iqy as SpiderIqy
 from spider.yk import Yk as SpiderYk
 from spider.let import Let as SpiderLet
 from spider.sh import Sh as SpiderSh
@@ -27,24 +27,20 @@ from common.mg import TV_TYPE_MAP
 # tv_names = utils.read_excel('../files/', 'names.xlsx')
 
 
-def start_qq(now):
+def start_qq(now, names):
     start = int(time.time())
     print "qq开始抓取 .."
     qq_spi = SpiderQq()
     qq_db = SerializeQq(now)
 
-    # spider tv_names
-    tv_names = qq_spi.tv_names()
-    tv_names = list(set(tv_names))
-
     # spider tv_info
-    qq_spi.tv_info(tv_names)
+    qq_spi.tv_info(names)
 
     # db tv_info
     db_tv_names = [_.name for _ in TvInfo.mget_by_platform(u'qq')]
-    qq_db.tv_info(tv_names, db_tv_names)
+    qq_db.tv_info(names, db_tv_names)
 
-    tv_names = tv_names + db_tv_names
+    tv_names = names + db_tv_names
     tv_names = list(set(tv_names))
 
     # spider play
@@ -58,43 +54,17 @@ def start_qq(now):
     print 'qq抓取完毕,耗时', utils.format_seconds(end - start)
 
 
-def start_iqy(now):
+def start_iqy(now, names):
     start = int(time.time())
     print "iqy开始抓取 .."
-    iqy_spi = SpiderIqy()
-    iqy_db = SerializeIqy(now)
 
-    # dianshiju
-    dianshiju_infos = iqy_spi.dianshiju_infos()
-    tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'电视剧')
-    db_tv_names = [_.name for _ in tv_infos]
-    for tv_info in tv_infos:
-        if not dianshiju_infos.get(tv_info.name) and tv_info.type == u'电视剧':
-            dianshiju_infos[tv_info.name] = \
-                [
-                    {'url': [tv_info.detail_urls]},
-                    {'id': tv_info.tv_id},
-                    {'v_id': tv_info.vids}]
-    iqy_db.dianshiju_info(dianshiju_infos, db_tv_names)
-
-    # zongyi
-    zongyi_infos = iqy_spi.zongyi_infos()
-    tv_infos = TvInfo.mget_by_platform_and_type(u'iqy', u'综艺')
-    db_tv_names = [_.name for _ in tv_infos]
-    for tv_info in tv_infos:
-        if not zongyi_infos.get(tv_info.name) and tv_info.type == u'综艺':
-            zongyi_infos[tv_info.name] = \
-                [
-                    tv_info.vids.split(","),
-                    tv_info.current_number,
-                    tv_info.description,
-                    tv_info.cast_member]
-    iqy_db.zongyi_info(zongyi_infos, db_tv_names)
-    # play_info
-    db_tv_infos = TvInfo.mget_by_platform(u'iqy')
+    db_tv_ids = [int(_.tv_id) for _ in TvInfo.mget_by_platform(u'iqy')]
+    iqy = SerializeIqy(now)
+    iqy.info_and_play(names, db_tv_ids)
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
         'iqy', utils.format_time(time.time(), "%Y-%m-%d"))
-    iqy_db.play_info(db_play_info_map, db_tv_infos)
+    db_tv_infos = TvInfo.mget_by_platform(u'iqy')
+    iqy.play_info(db_play_info_map, db_tv_infos)
     end = int(time.time())
 
     print 'iqy抓取完毕,耗时', utils.format_seconds(end - start)
@@ -196,21 +166,32 @@ def start_mg(now):
 
 class Start(threading.Thread):
 
-    def __init__(self, func, now):
+    def __init__(self, func, now, names):
         threading.Thread.__init__(self)
         self.func = func
         self.now = now
+        self.names = names
 
     def run(self):
-        self.func(self.now)
+        self.func(self.now, self.names)
 
 if __name__ == '__main__':
 
     now = utils.utc2datetime(time.time())
 
-    Start(start_qq, now).start()
-    Start(start_iqy, now).start()
-    Start(start_yk, now).start()
-    Start(start_let, now).start()
-    Start(start_sh, now).start()
-    Start(start_mg, now).start()
+    qq_spi = SpiderQq()
+    iqy = SerializeIqy(now)
+
+    spider_names = qq_spi.tv_names() + iqy.get_names()
+
+    db_names = [_.name for _ in TvInfo.mget()]
+
+    names = list(set(spider_names + db_names))
+
+    # names = [u'爱情公寓4', u'奔跑吧兄弟第三季']
+    Start(start_iqy, now, names).start()
+    Start(start_qq, now, names).start()
+    # Start(start_yk, now).start()
+    # Start(start_let, now).start()
+    # Start(start_sh, now).start()
+    # Start(start_mg, now).start()

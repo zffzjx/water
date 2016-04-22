@@ -8,21 +8,6 @@ SAVE_FILE = 'iqy/'
 PLATFORM = 'iqy'
 
 
-def tv_info_is_valid(page):
-    if not page:
-        return
-    try:
-        json_content = json.loads(re.search(REG_FOR_JSON, page).group())
-    except:
-        return
-    try:
-        if not json_content['es']:
-            return
-    except:
-        return
-    return json_content
-
-
 def play_info_is_valid(page):
     if not page:
         return

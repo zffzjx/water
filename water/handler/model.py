@@ -66,6 +66,13 @@ class TvInfo(Base):
             session.close()
 
     @classmethod
+    def mget(cls):
+        session = DBSession()
+        result = session.query(cls).all()
+        session.close()
+        return result
+
+    @classmethod
     def mget_by_platform(cls, platform):
         session = DBSession()
         result = session.query(cls).filter(cls.platform == platform).all()

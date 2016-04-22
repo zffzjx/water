@@ -23,7 +23,7 @@ class Qq(object):
         utils.mkdir(play_dir)
         for tv_info in db_tv_infos:
             if tv_info.type in [u'电视剧']:
-                # print u"抓取《{}》播放信息中".format(tv_info.name)
+                print u"qq抓取《{}》播放信息中".format(tv_info.name)
                 warning_message = u"qq Warning《{}》play_info ,结果不准确\r\n". \
                                   format(tv_info.name)
                 page = request(url.format(tv_info.tv_id))
@@ -36,7 +36,7 @@ class Qq(object):
                 vids = tv_info.vids.split(',')
                 episodes = tv_info.detail_episodes.split(',')
                 for vid, episode in zip(vids, episodes):
-                    # print u"抓取《{}》第{}期播放信息中。。。".format(tv_info.name, episode)
+                    print u"qq抓取《{}》第{}期播放信息中。。。".format(tv_info.name, episode)
                     warning_message = u"qq《{}》第{}期play_info ,结果不准确\r\n". \
                                       format(tv_info.name, episode)
                     page = request(url.format(vid))
@@ -45,7 +45,7 @@ class Qq(object):
                         continue
                     utils.write(play_dir, tv_info.name + episode +
                                 PLAY_INFO_FILE_FIX, page)
-            # print u'play and opinion《{}》抓取完毕'.format(tv_info.name)
+            print u'qq play and opinion《{}》抓取完毕'.format(tv_info.name)
 
     def tv_info(self, tv_names):
         url = 'http://s.video.qq.com/search?comment=1&plat=2&otype=json&query={}&callback=callback'  # noqa
@@ -60,7 +60,7 @@ class Qq(object):
                 continue
             utils.write(info_dir, name + TV_INFO_FILE_FIX,
                         page.encode('utf8'))
-            # print u'tv_info/《' + name + u'》抓取完毕'
+            print u'qq tv_info/《' + name + u'》抓取完毕'
 
     def tv_names(self):
         urls = ['http://v.qq.com/rank/detail/2_-1_-1_-1_2_-1.html',
