@@ -82,7 +82,12 @@ class Yk(object):
                     if not tmp_episode:
                         utils.log(message=warning_message)
                         continue
-                    all_number = len(tmp_episode)
+                try:
+                    if not tmp_episode[0]:
+                        continue
+                except:
+                    continue
+                all_number = len(tmp_episode)
                 current_number = re.search(u'<label>.+?</label>',
                                            tmp_episode[0].group()).group()
                 current_number = re.compile(u'<.+?>|期'). \
