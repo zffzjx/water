@@ -184,7 +184,6 @@ def start_mg(now):
     for tv_info in tv_infos:
         if not pids_map.get(tv_info.name):
             type_n = reverse[tv_info.type]
-            print 'type_n=', type_n
             pids_map[tv_info.name] = [tv_info.tv_id, type_n]
 
     db_play_info_map = PlayInfo.mget_map_by_platform_and_time_after(
