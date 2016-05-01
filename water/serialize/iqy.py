@@ -31,7 +31,7 @@ class Iqy(object):
 
     def info_and_play(self, names, db_tv_ids):
         for name in names:
-            print "iqy 抓取《{}》中".format(name.encode('utf8'))
+            # print "iqy 抓取《{}》中".format(name.encode('utf8'))
             search_result = request(self.album_url.
                                     format(name=name.encode('utf8')))
             album_id = self.get_album_id(search_result)
@@ -163,10 +163,10 @@ class Iqy(object):
     def play_info(self, db_play_info_map, db_tv_infos):
         url = 'http://mixer.video.iqiyi.com/jp/mixin/videos/{}/'
         for db_tv_info in db_tv_infos:
-            print u'《{}》play_info 抓取中'.format(db_tv_info.name)
+            # print u'《{}》play_info 抓取中'.format(db_tv_info.name)
             tmp_all_play_counts = 0
             for vid in db_tv_info.vids.split(','):
-                print u'《{}》{}期play_info 抓取中'.format(db_tv_info.name, vid)
+                # print u'《{}》{}期play_info 抓取中'.format(db_tv_info.name, vid)
                 warning_message = u"iqy《{}》{} play_info ,结果不准确\r\n". \
                     format(db_tv_info.name, vid)
                 page = request(url.format(vid))
