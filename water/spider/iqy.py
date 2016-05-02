@@ -16,7 +16,6 @@ class Iqy(object):
             name = re.search(u'title=".+?"', m.group()).group()[7:-1]
             url = re.search(u'http.+?html', m.group()).group()
             x_id_str = request(url)
-            print name
             try:
                 id = re.search(u'data-player-tvid=".+?"',
                                x_id_str).group()[18:-1]
