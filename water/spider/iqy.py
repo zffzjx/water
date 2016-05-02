@@ -1,6 +1,7 @@
 # coding=utf-8
 import re
 import json
+import random
 from spider import request
 
 
@@ -8,10 +9,12 @@ class Iqy(object):
 
     def dianshiju_infos(self):
         tv_infos = {}
-        dianshi_names_url = 'http://top.iqiyi.com/dianshiju.html'
+        dianshi_names_url = 'http://top.iqiyi.com/dianshiju.html?rdm=' + \
+            str(random.randint(1, 100000))
         for m in re.finditer(u' <li  j-delegate="liover"(.|\n)+?</li>',
                              request(dianshi_names_url)):
             name = re.search(u'title=".+?"', m.group()).group()[7:-1]
+            print name
             url = re.search(u'http.+?html', m.group()).group()
             x_id_str = request(url)
             id = re.search(u'data-player-tvid=".+?"', x_id_str).group()[18:-1]
@@ -24,7 +27,7 @@ class Iqy(object):
 
     def zongyi_infos(self):
         tv_infos = {}
-        zongyi_names_url = 'http://top.iqiyi.com/index/top50.htm?cid=6&dim=day'
+        zongyi_names_url = 'http://top.iqiyi.com/index/top50.htm?cid=6&dim=day' + str(random.randint(1, 100000)) # noqa
         list_url = 'http://cache.video.qiyi.com/jp/sdvlst/6/{}/?callback=callback' # noqa
         for m in re.finditer(u'<li  j-delegate="liover"(.|\n)+?</li>',
                              request(zongyi_names_url)):
