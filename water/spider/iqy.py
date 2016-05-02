@@ -17,7 +17,11 @@ class Iqy(object):
             url = re.search(u'http.+?html', m.group()).group()
             x_id_str = request(url)
             print name
-            id = re.search(u'data-player-tvid=".+?"', x_id_str).group()[18:-1]
+            try:
+                id = re.search(u'data-player-tvid=".+?"',
+                               x_id_str).group()[18:-1]
+            except:
+                continue
             v_id = re.search(u'data-player-videoid=".+?"', x_id_str). \
                 group()[21:-1]
             tv_infos[name] = [{'url': url}]
