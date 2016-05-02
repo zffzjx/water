@@ -14,9 +14,9 @@ class Iqy(object):
         for m in re.finditer(u' <li  j-delegate="liover"(.|\n)+?</li>',
                              request(dianshi_names_url)):
             name = re.search(u'title=".+?"', m.group()).group()[7:-1]
-            print name
             url = re.search(u'http.+?html', m.group()).group()
             x_id_str = request(url)
+            print name
             id = re.search(u'data-player-tvid=".+?"', x_id_str).group()[18:-1]
             v_id = re.search(u'data-player-videoid=".+?"', x_id_str). \
                 group()[21:-1]
